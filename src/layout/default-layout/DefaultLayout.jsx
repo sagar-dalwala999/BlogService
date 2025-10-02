@@ -28,10 +28,10 @@ function DefaultLayout() {
       <SidebarProvider
         open={open}
         onOpenChange={setOpen}
-        className="h-screen overflow-hidden p-2 md:p-5 bg-black"
+        className="h-screen overflow-hidden p-2 md:p-5 bg-gray-200"
       >
         <SidebarComponent open={open}/>
-        <SidebarInset className="flex flex-col h-full w-[calc(100%-16rem)] bg-black">
+        <SidebarInset className="flex flex-col h-full w-[calc(100%-16rem)] bg-gray-200">
           <Navbar />
           <section
             className={`relative lg:ml-4 rounded-2xl mt-4 mb-4 scrollbar-hide`}

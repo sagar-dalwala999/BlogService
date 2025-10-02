@@ -10,16 +10,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -71,6 +61,7 @@ const Projects = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
   const [deleteProjectId, setDeleteProjectId] = useState(null);
+  const [deleteProject, setDeleteProject] = useState(null);
 
   // Form states
   const [projectName, setProjectName] = useState("");
@@ -83,8 +74,9 @@ const Projects = () => {
     setIsProjectModalOpen(true);
   };
 
-  const handleDelete = (projectId) => {
-    setDeleteProjectId(projectId);
+  const handleDelete = (project) => {
+    setDeleteProjectId(project.id);
+    setDeleteProject(project);
     setIsDeleteModalOpen(true);
   };
 
@@ -92,6 +84,7 @@ const Projects = () => {
     setProjects(projects.filter((p) => p.id !== deleteProjectId));
     setIsDeleteModalOpen(false);
     setDeleteProjectId(null);
+    setDeleteProject(null);
   };
 
   const handleAddProject = () => {
@@ -195,7 +188,7 @@ const Projects = () => {
                   variant="ghost"
                   size="sm"
                   className="h-auto w-auto p-0 hover:bg-transparent"
-                  onClick={() => handleDelete(row.id)}
+                  onClick={() => handleDelete(row)}
                 >
                   <DeleteIcon />
                 </Button>
@@ -213,20 +206,20 @@ const Projects = () => {
   return (
     <div className="space-y-6">
       {/* Header with Add Button */}
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-gray-600">Manage your blog projects here.</p>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <p className="text-gray-600">Manage your blog projects here.</p>
+          </div>
+          <Button
+            onClick={handleAddProject}
+            className="bg-blue-500 hover:bg-blue-600 text-white w-full sm:w-auto"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add Project
+          </Button>
         </div>
-        <Button
-          onClick={handleAddProject}
-          className="bg-blue-500 hover:bg-blue-600 text-white"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Add Project
-        </Button>
-      </div>
 
-      {/* Projects Table */}
+        {/* Projects Table */}
       {/* <Card> */}
       {/* <CardHeader>
           <h2 className="text-lg font-semibold text-gray-900">Projects</h2>
@@ -307,27 +300,56 @@ const Projects = () => {
       </Dialog>
 
       {/* Delete Confirmation Modal */}
-      <AlertDialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Project</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete this project? This action cannot
-              be undone. All associated data and configurations will be
-              permanently removed.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmDelete}
-              className="bg-red-600 hover:bg-red-700 text-white"
-            >
-              Delete Project
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
+        <DialogContent className="sm:max-w-md border-0 shadow-2xl bg-white rounded-3xl p-0 overflow-hidden">
+          <div className="relative p-4 mt-4">
+            {/* Header with close button */}
+            {/* <DialogHeader className="relative p-6 pb-4">
+              <button
+                onClick={() => setIsDeleteModalOpen(false)}
+                className="absolute right-4 top-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </DialogHeader> */}
+            
+            {/* Content */}
+            <div className="px-6 pb-6 text-center">
+              {/* Delete Icon */}
+              <div className="flex justify-center mb-6">
+                <div className="relative">
+                  <img 
+                    src="/delete.png" 
+                    alt="Delete" 
+                    className="w-20 h-20 sm:w-24 sm:h-24 object-contain"
+                  />
+                </div>
+              </div>
+              
+              {/* Title */}
+              <DialogTitle className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
+                Delete Project
+              </DialogTitle>
+              
+              {/* Description */}
+              <p className="text-lg sm:text-xl text-gray-600 mb-8">
+                Are you sure you want to delete <br />
+                <span className="font-semibold text-gray-800">"{deleteProject?.name}"</span> ??
+              </p>
+              
+              {/* Delete Button */}
+              <Button 
+                onClick={confirmDelete}
+                className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white text-lg font-semibold py-4 rounded-2xl transition-all duration-200 transform hover:scale-[1.02] shadow-lg hover:shadow-xl"
+              >
+                Yes, Delete
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

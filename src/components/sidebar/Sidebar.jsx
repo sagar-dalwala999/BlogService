@@ -106,7 +106,7 @@ function SidebarComponent({ open }) {
 
   return (
     <Sidebar collapsible="icon" className="rounded-2xl ml-5 bg-background">
-      <SidebarHeader className="h-20">
+      <SidebarHeader className="h-20 pb-0 mt-[-8px]">
         <div className="w-full flex h-full flex-grow items-center justify-between">
           <Link
             to={"/"}
@@ -143,7 +143,7 @@ function SidebarComponent({ open }) {
                     >
                       <Link
                         to={item.children?.length === 0 && item.route}
-                        className="w-full flex justify-center items-center py-1"
+                        className="w-full flex justify-center items-center py-1 font-semibold"
                         onClick={(e) => {
                           if (item?.children?.length > 0 && open) {
                             e.preventDefault();
@@ -172,7 +172,7 @@ function SidebarComponent({ open }) {
                                     pathname.includes(item.route))
                                     ? "text-main"
                                     : "text-sidebar-foreground"
-                                } pr-[5px] fill-current`}
+                                } pr-[5px] fill-current h-6 w-6`}
                               />
                             )}
                           </div>
@@ -183,7 +183,7 @@ function SidebarComponent({ open }) {
                                 pathname.includes(item.route))
                                 ? "text-main"
                                 : "text-sidebar-foreground"
-                            }`}
+                            } text-[15px]`}
                           >
                             {item.title}
                           </span>
@@ -258,7 +258,7 @@ function SidebarComponent({ open }) {
           </SidebarGroup>
         ))}
       </SidebarContent>
-      <SidebarFooter className="items-center">
+      <SidebarFooter className="items-center lg:hidden block">
         <SidebarMenu>
           <SidebarMenuItem>
             <div className="flex items-center justify-between w-full md:p-1 p-2">

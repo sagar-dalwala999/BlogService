@@ -56,20 +56,20 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row">
-      {/* Left side - Illustration */}
-      <div className="lg:w-1/2 bg-gradient-to-br from-blue-500 to-blue-600 p-6 md:p-8 lg:p-12 flex items-center justify-center order-2 lg:order-1">
-        <div className="w-full max-w-md lg:max-w-2xl text-center">
+    <div className="min-h-screen flex">
+      {/* Left side - Illustration - Hidden on mobile and tablet */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-500 to-blue-600 p-12 items-center justify-center">
+        <div className="w-full max-w-2xl text-center">
           <img 
             src="/login.png" 
             alt="Login illustration" 
-            className="w-full h-auto max-w-none mx-auto scale-90 md:scale-100 lg:scale-110"
+            className="w-full h-auto max-w-none mx-auto scale-110"
           />
         </div>
       </div>
 
       {/* Right side - Form */}
-      <div className="lg:w-1/2 flex items-center lg:justify-start md:justify-center p-4 md:p-6 lg:p-8 bg-white order-1 lg:order-2">
+      <div className="w-full lg:w-1/2 flex items-center lg:justify-start justify-center p-4 md:p-6 lg:p-8 bg-white">
         <div className="w-full max-w-sm md:max-w-md lg:max-w-lg px-4 md:px-6 lg:px-8">
           <div className="space-y-6 md:space-y-8">
             <div className="text-center lg:text-left space-y-3">
@@ -89,16 +89,14 @@ const Login = () => {
                     id="email"
                     type="email"
                     placeholder="Email"
-                    className={`pl-12 md:pl-14 h-12 md:h-14 text-base md:text-lg ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
+                    className={`pl-12 md:pl-14 h-12 md:h-14 text-base md:text-lg ${errors.email ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'focus:border-blue-500 focus:ring-blue-500'}`}
                     {...register("email")}
                   />
                 </div>
                 {errors.email && (
-                  <Alert className="py-3 border-red-200 bg-red-50">
-                    <AlertDescription className="text-red-600 text-sm md:text-base">
-                      {errors.email.message}
-                    </AlertDescription>
-                  </Alert>
+                  <p className="text-red-600 text-xs md:text-sm lg:text-base mt-1">
+                    {errors.email.message}
+                  </p>
                 )}
               </div>
 
@@ -113,7 +111,7 @@ const Login = () => {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Password"
-                    className={`pl-12 md:pl-14 pr-12 md:pr-14 h-12 md:h-14 text-base md:text-lg ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
+                    className={`pl-12 md:pl-14 pr-12 md:pr-14 h-12 md:h-14 text-base md:text-lg ${errors.password ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'focus:border-blue-500 focus:ring-blue-500'}`}
                     {...register("password")}
                   />
                   <button
@@ -125,17 +123,15 @@ const Login = () => {
                   </button>
                 </div>
                 {errors.password && (
-                  <Alert className="py-3 border-red-200 bg-red-50">
-                    <AlertDescription className="text-red-600 text-sm md:text-base">
-                      {errors.password.message}
-                    </AlertDescription>
-                  </Alert>
+                  <p className="text-red-600 text-xs md:text-sm lg:text-base mt-1">
+                    {errors.password.message}
+                  </p>
                 )}
               </div>
 
               {/* Register Link */}
               <div className="text-center lg:text-right text-base md:text-lg pt-2">
-                <span className="text-gray-600">Create an account? </span>
+                <span className="text-gray-600">Don't have an account? </span>
                 <button
                   type="button"
                   onClick={handleRegisterRedirect}
