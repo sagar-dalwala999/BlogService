@@ -20,10 +20,6 @@ const Services = () => {
       csvFile: null,
       keywords: [
         { id: 1, keyword: "", link: "" },
-        { id: 2, keyword: "", link: "" },
-        { id: 3, keyword: "", link: "" },
-        { id: 4, keyword: "", link: "" },
-        { id: 5, keyword: "", link: "" },
       ],
     },
     backlink: {
@@ -31,10 +27,6 @@ const Services = () => {
       csvFile: null,
       keywords: [
         { id: 1, keyword: "", link: "" },
-        { id: 2, keyword: "", link: "" },
-        { id: 3, keyword: "", link: "" },
-        { id: 4, keyword: "", link: "" },
-        { id: 5, keyword: "", link: "" },
       ],
     },
     guestPosting: {
@@ -42,10 +34,6 @@ const Services = () => {
       csvFile: null,
       keywords: [
         { id: 1, keyword: "", link: "" },
-        { id: 2, keyword: "", link: "" },
-        { id: 3, keyword: "", link: "" },
-        { id: 4, keyword: "", link: "" },
-        { id: 5, keyword: "", link: "" },
       ],
     },
   })
@@ -104,6 +92,18 @@ const Services = () => {
     }))
   }
 
+  // Check if Add Keyword button should be enabled
+  const isAddKeywordEnabled = () => {
+    const keywords = currentFormData.keywords
+    // Enable if there's at least one keyword with both keyword and link filled
+    return keywords.some(k => k.keyword.trim() !== "" && k.link.trim() !== "")
+  }
+
+  // Check if a keyword can be removed (must have at least 1 keyword)
+  const canRemoveKeyword = () => {
+    return currentFormData.keywords.length > 1
+  }
+
   const saveKeyword = () => {
     alert(`Keyword saved for ${activeTab} form!`)
   }
@@ -142,8 +142,8 @@ const Services = () => {
   const TabIcon = tabConfig.icon
 
   return (
-    <div className="bg-background min-h-screen">
-      <div className="mx-auto max-w-full">
+    <div className="bg-background">
+      <div className="mx-auto px-4 ">
         {/* Header */}
         <div className="mb-6 sm:mb-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -162,50 +162,52 @@ const Services = () => {
 
         {/* Tabs Navigation */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 bg-transparent p-0 h-auto mb-6 sm:mb-8">
-            <TabsTrigger
-              value="blog"
-              className="data-[state=active]:bg-card data-[state=active]:shadow-lg data-[state=active]:border-primary/50 border-2 border-transparent rounded-xl p-3 sm:p-4 transition-all duration-200 hover:border-primary/30"
-            >
-              <div className="flex items-center gap-2 sm:gap-3 w-full">
-                <div className="rounded-lg bg-primary/10 p-1.5 sm:p-2 shrink-0">
-                  <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+          <div className="pb-2">
+            <TabsList className="grid w-full md:grid-cols-3 grid-cols-1 gap-2 sm:gap-4 bg-transparent p-0 h-auto mb-6 sm:mb-8 sm:min-w-0">
+              <TabsTrigger
+                value="blog"
+                className="data-[state=active]:bg-card data-[state=active]:shadow-lg data-[state=active]:border-primary/50 border-2 border-transparent rounded-xl p-3 sm:p-4 transition-all duration-200 hover:border-primary/30 min-w-[180px] sm:min-w-0"
+              >
+                <div className="flex items-center gap-2 sm:gap-3 w-full min-w-0">
+                  <div className="rounded-lg bg-primary/10 p-1.5 sm:p-2 shrink-0">
+                    <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                  </div>
+                  <div className="text-left min-w-0 flex-1">
+                    <div className="font-semibold text-xs sm:text-sm truncate">Blog Generation</div>
+                    <div className="text-xs text-muted-foreground hidden sm:block truncate">Content creation</div>
+                  </div>
                 </div>
-                <div className="text-left min-w-0 flex-1">
-                  <div className="font-semibold text-xs sm:text-sm truncate">Blog Generation</div>
-                  <div className="text-xs text-muted-foreground hidden sm:block">Content creation</div>
+              </TabsTrigger>
+              <TabsTrigger
+                value="backlink"
+                className="data-[state=active]:bg-card data-[state=active]:shadow-lg data-[state=active]:border-primary/50 border-2 border-transparent rounded-xl p-3 sm:p-4 transition-all duration-200 hover:border-primary/30 min-w-[180px] sm:min-w-0"
+              >
+                <div className="flex items-center gap-2 sm:gap-3 w-full min-w-0">
+                  <div className="rounded-lg bg-primary/10 p-1.5 sm:p-2 shrink-0">
+                    <Link2 className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                  </div>
+                  <div className="text-left min-w-0 flex-1">
+                    <div className="font-semibold text-xs sm:text-sm truncate">Backlink Settings</div>
+                    <div className="text-xs text-muted-foreground hidden sm:block truncate">Link building</div>
+                  </div>
                 </div>
-              </div>
-            </TabsTrigger>
-            <TabsTrigger
-              value="backlink"
-              className="data-[state=active]:bg-card data-[state=active]:shadow-lg data-[state=active]:border-primary/50 border-2 border-transparent rounded-xl p-3 sm:p-4 transition-all duration-200 hover:border-primary/30"
-            >
-              <div className="flex items-center gap-2 sm:gap-3 w-full">
-                <div className="rounded-lg bg-primary/10 p-1.5 sm:p-2 shrink-0">
-                  <Link2 className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+              </TabsTrigger>
+              <TabsTrigger
+                value="guestPosting"
+                className="data-[state=active]:bg-card data-[state=active]:shadow-lg data-[state=active]:border-primary/50 border-2 border-transparent rounded-xl p-3 sm:p-4 transition-all duration-200 hover:border-primary/30 min-w-[180px] sm:min-w-0"
+              >
+                <div className="flex items-center gap-2 sm:gap-3 w-full min-w-0">
+                  <div className="rounded-lg bg-primary/10 p-1.5 sm:p-2 shrink-0">
+                    <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                  </div>
+                  <div className="text-left min-w-0 flex-1">
+                    <div className="font-semibold text-xs sm:text-sm truncate">Guest Posting</div>
+                    <div className="text-xs text-muted-foreground hidden sm:block truncate">Outreach management</div>
+                  </div>
                 </div>
-                <div className="text-left min-w-0 flex-1">
-                  <div className="font-semibold text-xs sm:text-sm truncate">Backlink Settings</div>
-                  <div className="text-xs text-muted-foreground hidden sm:block">Link building</div>
-                </div>
-              </div>
-            </TabsTrigger>
-            <TabsTrigger
-              value="guestPosting"
-              className="data-[state=active]:bg-card data-[state=active]:shadow-lg data-[state=active]:border-primary/50 border-2 border-transparent rounded-xl p-3 sm:p-4 transition-all duration-200 hover:border-primary/30 sm:col-span-2 lg:col-span-1"
-            >
-              <div className="flex items-center gap-2 sm:gap-3 w-full">
-                <div className="rounded-lg bg-primary/10 p-1.5 sm:p-2 shrink-0">
-                  <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                </div>
-                <div className="text-left min-w-0 flex-1">
-                  <div className="font-semibold text-xs sm:text-sm truncate">Guest Posting</div>
-                  <div className="text-xs text-muted-foreground hidden sm:block">Outreach management</div>
-                </div>
-              </div>
-            </TabsTrigger>
-          </TabsList>
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           {/* Tab Content */}
           <TabsContent value={activeTab} className="mt-0">
@@ -327,10 +329,32 @@ const Services = () => {
                         Add and manage your target keywords and associated links
                       </CardDescription>
                     </div>
-                    <Button onClick={addKeyword} size="sm" className="gap-2 bg-primary hover:bg-primary/90 w-full sm:w-auto">
-                      <Plus className="h-4 w-4" />
-                      Add Keyword
-                    </Button>
+                    <div className="w-full sm:w-auto">
+                      {isAddKeywordEnabled() ? (
+                        <Button 
+                          onClick={addKeyword} 
+                          size="sm" 
+                          className="gap-2 bg-primary hover:bg-primary/90 w-full sm:w-auto"
+                        >
+                          <Plus className="h-4 w-4" />
+                          Add Keyword
+                        </Button>
+                      ) : (
+                        <div className="relative w-full sm:w-auto">
+                          <Button 
+                            disabled 
+                            size="sm" 
+                            className="gap-2 w-full sm:w-auto opacity-50 cursor-not-allowed"
+                          >
+                            <Plus className="h-4 w-4" />
+                            Add Keyword
+                          </Button>
+                          <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+                            Fill in keyword and URL to add more
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -345,7 +369,7 @@ const Services = () => {
                             {index + 1}
                           </div>
                           <div className="grid flex-1 gap-3 sm:grid-cols-2">
-                            <div className="space-y-2">
+                            <div className="space-y-2 min-w-0">
                               <Label
                                 htmlFor={`keyword-${keywordItem.id}`}
                                 className="text-xs font-medium text-muted-foreground"
@@ -357,10 +381,10 @@ const Services = () => {
                                 placeholder="Enter target keyword"
                                 value={keywordItem.keyword}
                                 onChange={(e) => updateKeyword(keywordItem.id, "keyword", e.target.value)}
-                                className="border focus:border-primary text-sm"
+                                className="border focus:border-primary text-sm w-full"
                               />
                             </div>
-                            <div className="space-y-2">
+                            <div className="space-y-2 min-w-0">
                               <Label
                                 htmlFor={`link-${keywordItem.id}`}
                                 className="text-xs font-medium text-muted-foreground"
@@ -372,7 +396,7 @@ const Services = () => {
                                 placeholder="https://example.com"
                                 value={keywordItem.link}
                                 onChange={(e) => updateKeyword(keywordItem.id, "link", e.target.value)}
-                                className="border focus:border-primary text-sm"
+                                className="border focus:border-primary text-sm w-full"
                               />
                             </div>
                           </div>
@@ -381,15 +405,27 @@ const Services = () => {
                               <CheckCircle2 className="h-3 w-3 sm:h-4 sm:w-4" />
                               <span className="hidden sm:inline">Save</span>
                             </Button>
-                            <Button
-                              onClick={() => removeKeyword(keywordItem.id)}
-                              size="sm"
-                              variant="destructive"
-                              className="flex-1 sm:flex-none gap-1 text-xs"
-                            >
-                              <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
-                              <span className="hidden sm:inline">Delete</span>
-                            </Button>
+                            {canRemoveKeyword() ? (
+                              <Button
+                                onClick={() => removeKeyword(keywordItem.id)}
+                                size="sm"
+                                variant="destructive"
+                                className="flex-1 sm:flex-none gap-1 text-xs"
+                              >
+                                <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                                <span className="hidden sm:inline">Delete</span>
+                              </Button>
+                            ) : (
+                              <Button
+                                disabled
+                                size="sm"
+                                variant="outline"
+                                className="flex-1 sm:flex-none gap-1 text-xs opacity-50 cursor-not-allowed"
+                              >
+                                <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                                <span className="hidden sm:inline">Delete</span>
+                              </Button>
+                            )}
                           </div>
                         </div>
                       </div>
