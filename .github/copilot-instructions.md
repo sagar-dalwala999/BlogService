@@ -3,7 +3,7 @@
 ## Important Guidelines
 - Do not run npm run dev because that is already done in the terminal.
 - Do not run cd commands, you are already in the project directory.
-
+- Just write code snippets and explanations are not need if not mentioned.
 ## Project Architecture
 
 This is a **React + Vite** blog services application with **shadcn/ui** components and **Tailwind CSS**. The project follows a modern frontend architecture focused on authentication and user management.
