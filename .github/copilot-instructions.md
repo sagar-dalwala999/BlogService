@@ -2,6 +2,7 @@
 
 ## Important Guidelines
 - Do not run npm run dev because that is already done in the terminal.
+- Do not run cd commands, you are already in the project directory.
 
 ## Project Architecture
 

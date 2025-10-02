@@ -1,13 +1,18 @@
 import PropTypes from "prop-types";
 import { ChevronRight } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
+import { Link,useLocation } from "react-router-dom";
+import { ReactSvgs } from "@/assets/svgs/ReactSvgs";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, FolderOpen } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { useDispatch, useSelector } from "react-redux";
+import useSidebarMenuService from "@/services/sidebarMenu";
+import { setSelectedMenu, setSidebarChildMenu } from "@/redux/slices/supportSlice";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Breadcrumb, BreadcrumbList } from "../ui/breadcrumb";
+import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import {
   Sidebar,
   SidebarContent,
@@ -22,36 +27,48 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
-
-// Mock data structure matching the reference sidebar
-const sidebarRoutes = [
-  {
-    title: "Main",
-    navMain: [
-      {
-        title: "Dashboard",
-        route: "/dashboard",
-        icon: LayoutDashboard,
-        menuId: 1,
-        isShow: true,
-        children: [],
-      },
-      {
-        title: "Projects",
-        route: "/projects",
-        icon: FolderOpen,
-        menuId: 2,
-        isShow: true,
-        children: [],
-      },
-    ],
-  },
-];
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
 
 function SidebarComponent({ open }) {
+  const dispatch = useDispatch();
   const { isMobile, setOpenMobile } = useSidebar();
   const { pathname } = useLocation();
   const [openSubmenus, setOpenSubmenus] = useState({});
+  const company = useSelector((state) => state?.fields?.companyDetails);
+  const [sidebarRoutes, setSidebarRoutes] = useState([]);
+  const { fetchSidebarMenuList } = useSidebarMenuService();
+
+  const getTokenData = () => {
+    const tokenString = Cookies.get("logibrisk") || "";
+    if (!tokenString) return null;
+
+    return jwtDecode(tokenString);
+  };
+  
+  const token = getTokenData();
+
+  const { data: sidebarData } = useQuery({
+    queryKey: ["sidebarMenu"],
+    queryFn: fetchSidebarMenuList,
+    staleTime: 1000 * 60 * 20,
+    cacheTime: 1000 * 60 * 20,
+    refetchOnWindowFocus: false,
+    retry: false,
+    enabled: !!token?.userId
+  });
+
+  useEffect(() => {
+    if (sidebarData) {
+      setSidebarRoutes(sidebarData?.erpMenuList);
+      dispatch(setSidebarChildMenu(sidebarData?.erpChildMenuList));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      setSidebarRoutes([]);
+      dispatch(setSidebarChildMenu([]));
+    }
+  }, [sidebarData]);
 
   const toggleSubmenu = (title) => {
     setOpenSubmenus((prev) => ({
@@ -90,43 +107,59 @@ function SidebarComponent({ open }) {
     const selectedMenuItem = findMenuItemByPathname(pathname, sidebarRoutes);
 
     if (selectedMenuItem) {
-      // You can add dispatch logic here when you integrate with Redux
-      // setSelectedMenu(selectedMenuItem);
+      dispatch(setSelectedMenu({
+        menuId: selectedMenuItem?.menuId,
+        title: selectedMenuItem?.title,
+        route: selectedMenuItem?.route,
+      }));
+    } else {
+      dispatch(setSelectedMenu(null));
     }
-  }, [pathname]);
+  }, [pathname, sidebarRoutes, dispatch]);
 
-  const handleMenuClick = (_item) => {
-    // You can add dispatch logic here when you integrate with Redux
-    // dispatch(setSelectedMenu({ menuId: item?.menuId, title: item?.title, route: item?.route }));
+  const handleMenuClick = (item) => {
+    dispatch(setSelectedMenu({ menuId: item?.menuId, title: item?.title, route: item?.route }));
     // Close mobile sidebar when menu item is clicked
     if (isMobile) {
       setOpenMobile(false);
     }
   };
 
+  const getLogoUrl = () => {
+    if (company?.companyProfileUrl && company.companyProfileUrl.trim() !== '') {
+      return company.companyProfileUrl;
+    }
+    return ReactSvgs.appLogo;
+  };
+
   return (
-    <Sidebar collapsible="icon" className="rounded-2xl ml-5 bg-background">
+    <Sidebar collapsible="icon" className={`rounded-2xl ml-5 bg-background`}>
       <SidebarHeader className="h-20">
         <div className="w-full flex h-full flex-grow items-center justify-between">
           <Link
             to={"/"}
-            className={`${
-              open ? "flex" : "hidden"
-            } transition-all items-center justify-center h-16 lg:ml-2`}
+            className={`${open ? "flex" : "hidden"} transition-all items-center justify-center h-16 lg:ml-2`}
           >
-            <span className="text-xl font-bold text-gray-800">
-              MY<span className="text-blue-500">PORTAL</span>
-            </span>
+            <img
+              src={getLogoUrl()}
+              alt="logo"
+              className="h-12 max-w-36 object-contain rounded-sm"
+              onError={(e) => (e.target.src = ReactSvgs.appLogo)}
+            />
           </Link>
           {!open && isMobile && (
             <Link to={"/"} className="flex items-center justify-center h-16">
-              <span className="text-lg font-bold text-blue-500">MP</span>
+              <img
+                src={getLogoUrl()}
+                alt="logo"
+                className="h-12 w-auto max-w-full object-contain rounded-sm"
+                onError={(e) => (e.target.src = ReactSvgs.appLogo)}
+              />
             </Link>
           )}
           <SidebarTrigger
-            className={`${
-              !open && !isMobile ? "flex-grow transition-all" : ""
-            } dark:hover:bg-hoverColor text-sidebar-foreground px-5`}
+            className={`${!open && !isMobile ? "flex-grow transition-all" : ""
+              } dark:hover:bg-hoverColor text-sidebar-foreground px-5`}
           />
         </div>
       </SidebarHeader>
@@ -166,24 +199,22 @@ function SidebarComponent({ open }) {
                           <div className="h-12 w-12 flex items-center justify-center">
                             {item.icon && (
                               <item.icon
-                                className={`${
-                                  item.route === pathname ||
+                                className={`${item.route === pathname ||
                                   (item.route !== "/" &&
                                     pathname.includes(item.route))
-                                    ? "text-main"
-                                    : "text-sidebar-foreground"
-                                } pr-[5px] fill-current`}
+                                  ? "text-main"
+                                  : "text-sidebar-foreground"
+                                  } pr-[5px] fill-current`}
                               />
                             )}
                           </div>
                           <span
-                            className={`${
-                              item.route === pathname ||
+                            className={`${item.route === pathname ||
                               (item.route !== "/" &&
                                 pathname.includes(item.route))
-                                ? "text-main"
-                                : "text-sidebar-foreground"
-                            }`}
+                              ? "text-main"
+                              : "text-sidebar-foreground"
+                              }`}
                           >
                             {item.title}
                           </span>
@@ -196,11 +227,10 @@ function SidebarComponent({ open }) {
                               className="ml-auto h-4 w-4"
                             >
                               <ChevronRight
-                                className={`ml-auto size-4 ${
-                                  pathname.includes(item.route)
-                                    ? "text-main"
-                                    : "text-sidebar-foreground"
-                                }`}
+                                className={`ml-auto size-4 ${pathname.includes(item.route)
+                                  ? "text-main"
+                                  : "text-sidebar-foreground"
+                                  }`}
                               />
                             </motion.div>
                           )}
@@ -236,11 +266,10 @@ function SidebarComponent({ open }) {
                                       className={`p-0 relative ${cn("py-5")}`}
                                     >
                                       <span
-                                        className={`${
-                                          pathname === child.route
-                                            ? "text-main"
-                                            : "text-sidebar-foreground"
-                                        } text-xs pl-2`}
+                                        className={`${pathname === child.route
+                                          ? "text-main"
+                                          : "text-sidebar-foreground"
+                                          } text-xs pl-2`}
                                       >
                                         {child.title}
                                       </span>
@@ -261,8 +290,8 @@ function SidebarComponent({ open }) {
       <SidebarFooter className="items-center">
         <SidebarMenu>
           <SidebarMenuItem>
-            <div className="flex items-center justify-between w-full md:p-1 p-2">
-              <div className="flex items-center space-x-3">
+            <Breadcrumb className="lg:hidden flex items-center justify-between w-full p-2">
+              <BreadcrumbList>
                 <Avatar className="h-[40px] w-[40px] rounded-lg">
                   <AvatarImage
                     src={"https://github.com/shadcn.png"}
@@ -271,11 +300,9 @@ function SidebarComponent({ open }) {
                   />
                   <AvatarFallback className="rounded-lg">JD</AvatarFallback>
                 </Avatar>
-                {open && (
-                  <p className="text-sm text-sidebar-foreground">John Doe</p>
-                )}
-              </div>
-            </div>
+                <p className="text-sm text-sidebar-foreground">John Doe</p>
+              </BreadcrumbList>
+            </Breadcrumb>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>

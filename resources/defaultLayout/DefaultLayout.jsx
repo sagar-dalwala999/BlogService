@@ -3,10 +3,9 @@ import React, { useState, useRef } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import ThemeProvider from "@/lib/contexts/theme-provider";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import Navbar from "../../components/navbar/Navbar";
 
 const SidebarComponent = React.lazy(() => import("@/components/sidebar/Sidebar"));
-// const Navbar = React.lazy(() => import("@/components/navbar/Navbar"));
+const Navbar = React.lazy(() => import("@/components/navbar/Navbar"));
 
 function DefaultLayout() {
   const contentScrollRef = useRef(null);
@@ -28,10 +27,10 @@ function DefaultLayout() {
       <SidebarProvider
         open={open}
         onOpenChange={setOpen}
-        className="h-screen overflow-hidden p-2 md:p-5 bg-black"
+        className="h-screen overflow-hidden p-2 md:p-5 bg-sidebar"
       >
         <SidebarComponent open={open}/>
-        <SidebarInset className="flex flex-col h-full w-[calc(100%-16rem)] bg-black">
+        <SidebarInset className="flex flex-col h-full w-[calc(100%-16rem)]">
           <Navbar />
           <section
             className={`relative lg:ml-4 rounded-2xl mt-4 mb-4 scrollbar-hide`}

@@ -53,7 +53,7 @@ const SignUp = () => {
       await new Promise((resolve) => setTimeout(resolve, 2000));
       console.log("Form data:", data);
       // Handle successful signup here
-      navigate("/dashboard");
+      navigate("/dashboard", { state: { fromSignup: true } });
       reset();
     } catch (error) {
       console.error("Signup failed:", error);

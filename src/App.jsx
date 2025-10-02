@@ -3,6 +3,7 @@ import Login from './components/auth/Login';
 import SignUp from './components/auth/SignUp';
 import Dashboard from './components/dashboard/Dashboard';
 import Projects from './components/projects/Projects';
+import Services from './components/services/Services';
 import DefaultLayout from './layout/default-layout/DefaultLayout';
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
         <Route path="/*" element={<DefaultLayout />}>
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="projects" element={<Projects />} />
+          <Route path="services" element={<Services />} />
         </Route>
       </Routes>
     </Router>
